@@ -8,7 +8,8 @@ import type {
   CultivationTechnique,
   CombatSkill,
   Treasure,
-  TechniqueTier
+  TechniqueTier,
+  TierSubGrade
 } from '../domain/index.js';
 import { generateTechnique } from './techniqueGenerator.js';
 import { generateTreasure } from './treasureGenerator.js';
@@ -27,11 +28,14 @@ const realms: CultivationRealm[] = [
   'Qi Refining',
   'Foundation Establishment',
   'Core Formation',
-  'Nascent Soul'
+  'Nascent Soul',
+  'Soul Formation',
+  'Immortal Ascension'
 ];
 
 const elements: AffinityElement[] = ['Metal', 'Wood', 'Water', 'Fire', 'Earth', 'Lightning', 'Ice', 'Wind'];
 const techniqueFocuses: Array<'Body' | 'Qi' | 'Soul' | 'Dual'> = ['Body', 'Qi', 'Soul', 'Dual'];
+const subGrades: TierSubGrade[] = ['下品', '中品', '上品'];
 
 const names = ['Li Ming', 'Chen Yu', 'Su Ling', 'Wang Hao', 'Zhou Mei', 'Bai Yun', 'Feng Yan', 'Qin Lei'];
 
@@ -77,6 +81,7 @@ const randomCombatSkill = (realm: CultivationRealm): CombatSkill => {
     id: uuid(),
     name: `${tier} ${element} Burst`,
     tier,
+    subGrade: pickOne(subGrades),
     element,
     energyCost: randomInt(5, 20),
     baseDamage: randomInt(8, 25),
@@ -90,7 +95,11 @@ const randomTreasureSet = (count: number): Treasure[] => {
   const slots: Array<'weapon' | 'armor' | 'accessory' | 'artifact'> = ['weapon', 'armor', 'accessory', 'artifact'];
   const tiers: TechniqueTier[] = ['Mortal', 'Earth', 'Heaven'];
   return Array.from({ length: count }, () =>
-    generateTreasure({ tier: pickOne(tiers), slot: pickOne(slots) })
+    generateTreasure({
+      tier: pickOne(tiers),
+      subGrade: pickOne(subGrades),
+      slot: pickOne(slots)
+    })
   );
 };
 
@@ -104,7 +113,11 @@ export const generateCharacter = (config: NPCConfig = {}): CharacterSheet => {
   const realm = config.realm ?? pickOne(realms);
   const spiritRoot = randomSpiritRoot();
   const techniques: CultivationTechnique[] = [
-    generateTechnique({ desiredRealm: realm, focus: pickOne(techniqueFocuses) })
+    generateTechnique({
+      desiredRealm: realm,
+      focus: pickOne(techniqueFocuses),
+      subGrade: pickOne(subGrades)
+    })
   ];
   const combatSkills: CombatSkill[] = [randomCombatSkill(realm)];
 

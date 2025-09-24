@@ -4,7 +4,8 @@ import type {
   TreasureGeneratorConfig,
   TechniqueTier,
   EquipmentSlot,
-  AttributeKey
+  AttributeKey,
+  TierSubGrade
 } from '../domain/index.js';
 import { pickOne, randomInt } from '../utils/random.js';
 
@@ -24,6 +25,7 @@ const tierLore: Record<TechniqueTier, string> = {
 };
 
 const attributeKeys: AttributeKey[] = ['constitution', 'perception', 'luck', 'spirit', 'strength', 'agility'];
+const subGrades: TierSubGrade[] = ['下品', '中品', '上品'];
 
 export const generateTreasure = (config: TreasureGeneratorConfig): Treasure => {
   const baseBonus = {
@@ -45,6 +47,7 @@ export const generateTreasure = (config: TreasureGeneratorConfig): Treasure => {
     id: uuid(),
     name: pickOne(slotNames[config.slot]),
     tier: config.tier,
+    subGrade: config.subGrade ?? pickOne(subGrades),
     slot: config.slot,
     bonuses,
     specialEffect: `Enhances ${pickOne(attributeKeys)}-aligned techniques when channeled during battle.`,

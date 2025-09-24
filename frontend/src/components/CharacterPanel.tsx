@@ -1,14 +1,26 @@
 ﻿import type {
   CharacterSheet,
+  CultivationRealm,
   AffinityElement,
   SpiritRootType,
-  TechniqueTier
+  TechniqueTier,
+  TierSubGrade
 } from '@xiuxian/shared';
 import './CharacterPanel.css';
 
 interface Props {
   character: CharacterSheet;
 }
+
+const realmLabels: Partial<Record<CultivationRealm, string>> = {
+  Mortal: '凡人',
+  'Qi Refining': '练气',
+  'Foundation Establishment': '筑基',
+  'Core Formation': '结丹',
+  'Nascent Soul': '元婴',
+  'Soul Formation': '化神',
+  'Immortal Ascension': '飞升'
+};
 
 const attributeLabels: Record<string, string> = {
   constitution: '体魄',
@@ -60,6 +72,11 @@ const equipmentSlotLabels: Record<string, string> = {
   artifact: '法器'
 };
 
+const resolveTierText = (tier: TechniqueTier, subGrade?: TierSubGrade) => {
+  const base = techniqueTierLabels[tier] ?? tier;
+  return `${base}·${subGrade}`;
+};
+
 export const CharacterPanel = ({ character }: Props) => {
   const mainAffinity = character.spiritRoot.mainAffinity
     ? elementLabels[character.spiritRoot.mainAffinity]
@@ -67,6 +84,7 @@ export const CharacterPanel = ({ character }: Props) => {
   const secondary = character.spiritRoot.secondaryAffinities
     .map((element) => elementLabels[element])
     .join('、') || '无';
+  const realm = realmLabels[character.realm] ?? character.realm;
 
   return (
     <section className="panel">
@@ -74,7 +92,7 @@ export const CharacterPanel = ({ character }: Props) => {
       <div className="panel__section">
         <div className="panel__stat">
           <span>境界</span>
-          <strong>{character.realm}</strong>
+          <strong>{realm}</strong>
         </div>
         <div className="panel__stat">
           <span>灵根类型</span>
@@ -111,7 +129,7 @@ export const CharacterPanel = ({ character }: Props) => {
             <li key={technique.id}>
               <strong>{technique.name}</strong>
               <span>
-                （{techniqueTierLabels[technique.tier]}·{techniqueFocusLabels[technique.focus]}）
+                （{resolveTierText(technique.tier, technique.subGrade)}·{techniqueFocusLabels[technique.focus]}）
               </span>
             </li>
           ))}
@@ -123,7 +141,9 @@ export const CharacterPanel = ({ character }: Props) => {
           {character.combatSkills.map((skill) => (
             <li key={skill.id}>
               <strong>{skill.name}</strong>
-              <span>（消耗 {skill.energyCost} 灵力）</span>
+              <span>
+                （{resolveTierText(skill.tier, skill.subGrade)}·消耗 {skill.energyCost} 灵力）
+              </span>
             </li>
           ))}
         </ul>
@@ -135,7 +155,7 @@ export const CharacterPanel = ({ character }: Props) => {
             <li key={treasure.id}>
               <strong>{treasure.name}</strong>
               <span>
-                （{equipmentSlotLabels[treasure.slot] ?? treasure.slot}·{techniqueTierLabels[treasure.tier]}）
+                （{equipmentSlotLabels[treasure.slot] ?? treasure.slot}·{resolveTierText(treasure.tier, treasure.subGrade)}）
               </span>
             </li>
           ))}
@@ -144,3 +164,4 @@ export const CharacterPanel = ({ character }: Props) => {
     </section>
   );
 };
+

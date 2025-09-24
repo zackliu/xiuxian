@@ -1,8 +1,9 @@
-import { v4 as uuid } from 'uuid';
+﻿import { v4 as uuid } from 'uuid';
 import type {
   CultivationTechnique,
   TechniqueGeneratorConfig,
-  TechniqueTier
+  TechniqueTier,
+  TierSubGrade
 } from '../domain/index.js';
 import { pickOne, randomInt } from '../utils/random.js';
 
@@ -30,11 +31,13 @@ const attributesByFocus = {
   Dual: ['constitution', 'spirit', 'perception']
 } as const;
 
+const subGrades: TierSubGrade[] = ['下品', '中品', '上品'];
+
 export const generateTechnique = (config: TechniqueGeneratorConfig): CultivationTechnique => {
   const tier = config.tier ?? tierOrder[randomInt(0, tierOrder.length - 1)];
   const namePool = techniqueNames[config.focus];
   const baseBonus = tierStatBoost[tier];
-  const bonuses = attributesByFocus[config.focus].reduce<Record<string, number>>((acc, attribute) => {
+  const bonuses = attributesByFocus[config.focus].reduce<Partial<Record<string, number>>>((acc, attribute) => {
     acc[attribute] = baseBonus + randomInt(0, 3);
     return acc;
   }, {});
@@ -43,6 +46,7 @@ export const generateTechnique = (config: TechniqueGeneratorConfig): Cultivation
     id: uuid(),
     name: pickOne(namePool),
     tier,
+    subGrade: config.subGrade ?? pickOne(subGrades),
     focus: config.focus,
     realmRequirement: config.desiredRealm,
     bonuses,

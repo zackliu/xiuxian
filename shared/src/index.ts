@@ -1,11 +1,11 @@
-export type CultivationRealm =
-  | 'Mortal'                    //凡人
-  | 'Qi Refining'               //练气
-  | 'Foundation Establishment'  //筑基
-  | 'Core Formation'            //结丹
-  | 'Nascent Soul'              //元婴
-  | 'Soul Formation'            //化神
-  | 'Immortal Ascension';       //飞升
+﻿export type CultivationRealm =
+  | 'Mortal'
+  | 'Qi Refining'
+  | 'Foundation Establishment'
+  | 'Core Formation'
+  | 'Nascent Soul'
+  | 'Soul Formation'
+  | 'Immortal Ascension';
 
 export type AttributeKey =
   | 'constitution'
@@ -40,11 +40,13 @@ export interface SpiritRoot {
 }
 
 export type TechniqueTier = 'Mortal' | 'Earth' | 'Heaven' | 'Mystic' | 'Immortal';
+export type TierSubGrade = '下品' | '中品' | '上品';
 
 export interface CultivationTechnique {
   id: string;
   name: string;
   tier: TechniqueTier;
+  subGrade: TierSubGrade;
   focus: 'Body' | 'Qi' | 'Soul' | 'Dual';
   realmRequirement: CultivationRealm;
   bonuses: Partial<Record<AttributeKey, number>>;
@@ -55,6 +57,7 @@ export interface CombatSkill {
   id: string;
   name: string;
   tier: TechniqueTier;
+  subGrade: TierSubGrade;
   element: AffinityElement | 'Neutral';
   energyCost: number;
   baseDamage: number;
@@ -73,6 +76,7 @@ export interface Treasure {
   id: string;
   name: string;
   tier: TechniqueTier;
+  subGrade: TierSubGrade;
   slot: EquipmentSlot;
   bonuses: Partial<Record<AttributeKey, number>>;
   specialEffect?: string;
@@ -196,10 +200,12 @@ export interface TechniqueGeneratorConfig {
   desiredRealm: CultivationRealm;
   focus: 'Body' | 'Qi' | 'Soul' | 'Dual';
   tier?: TechniqueTier;
+  subGrade?: TierSubGrade;
 }
 
 export interface TreasureGeneratorConfig {
   tier: TechniqueTier;
+  subGrade?: TierSubGrade;
   slot: EquipmentSlot;
 }
 

@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { generateCharacter } from '../../src/generators/characterGenerator.js';
 
 const attributeKeys = ['constitution', 'perception', 'luck', 'spirit', 'strength', 'agility'] as const;
+const subGrades = ['下品', '中品', '上品'];
 
 describe('generateCharacter', () => {
   it('creates npc character with baseline stats', () => {
@@ -13,8 +14,15 @@ describe('generateCharacter', () => {
     });
     expect(npc.spiritRoot.purity).toBeGreaterThanOrEqual(40);
     expect(npc.cultivationTechniques.length).toBeGreaterThan(0);
-    expect(npc.combatSkills.length).toBeGreaterThan(0);
-    expect(npc.equippedTreasures.length).toBeGreaterThan(0);
+    npc.cultivationTechniques.forEach((technique) => {
+      expect(subGrades).toContain(technique.subGrade);
+    });
+    npc.combatSkills.forEach((skill) => {
+      expect(subGrades).toContain(skill.subGrade);
+    });
+    npc.equippedTreasures.forEach((treasure) => {
+      expect(subGrades).toContain(treasure.subGrade);
+    });
   });
 
   it('honors explicit configuration for role, name, and realm', () => {
