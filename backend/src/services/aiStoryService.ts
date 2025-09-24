@@ -12,6 +12,7 @@ import type {
   TimelineEvent
 } from '@xiuxian/shared';
 import { getOpenAIClient, getOpenAIModel } from '../ai/openAIClient.js';
+import { logger } from '../utils/logger.js';
 import { buildStoryInitPrompt } from '../prompts/storyInitPrompt.js';
 import { buildStoryProgressPrompt } from '../prompts/storyProgressPrompt.js';
 
@@ -283,8 +284,16 @@ export const generateInitialGame = async (payload: GameInitPayload) => {
     ]
   });
 
-  const raw = response.choices[0]?.message?.content;
-  const parsed = InitialGameBlueprintSchema.parse(parseJSON(raw));
+  const rawContent = response.choices[0]?.message?.content;
+  const json = parseJSON(rawContent);
+
+  let parsed: InitialGameBlueprint;
+  try {
+    parsed = InitialGameBlueprintSchema.parse(json);
+  } catch (error) {
+    logger.error('AI 初始化回包解析失败', { raw: json, error });
+    throw error;
+  }
 
   const player = buildCharacter(parsed.player, 'player');
   const npcs = parsed.npcs.map((npc) => buildCharacter(npc, 'npc'));
@@ -336,8 +345,16 @@ export const generateStoryProgress = async (state: GameState, command: string) =
     ]
   });
 
-  const raw = response.choices[0]?.message?.content;
-  const parsed = StoryProgressBlueprintSchema.parse(parseJSON(raw));
+  const rawContent = response.choices[0]?.message?.content;
+  const json = parseJSON(rawContent);
+
+  let parsed: StoryProgressBlueprint;
+  try {
+    parsed = StoryProgressBlueprintSchema.parse(json);
+  } catch (error) {
+    logger.error('AI 剧情推进回包解析失败', { raw: json, error });
+    throw error;
+  }
 
   const characters = Object.values(state.history.characters);
   const storyBeat = buildStoryBeat(parsed.story, characters);

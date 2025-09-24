@@ -21,9 +21,10 @@ export const buildStoryInitPrompt = (payload: GameInitPayload) => `你是一位�
    - 时间线事件类型 timeline[].type ：["story","battle","discovery","relationship"]
 3. 数值字段（如属性、灵根纯度、紧张度等）请给出整数。
 4. 角色属性需完整包含 constitution、perception、luck、spirit、strength、agility 六项。
-5. 为每个角色至少生成一部功法、一个战斗技法；主角至少携带一件法宝。
-6. 故事概要 tension 取值 10~90，代表剧情紧张度。
-7. nextOptions 至少提供 3 个不同的可选行动，每个包含简短描述与至少 2 条潜在后果描述。
+5. 至少生成 3 名 NPC（含主角伙伴/对手等），并让每位 NPC 结构与示例保持一致。
+6. 为每个角色至少生成一部功法、一个战斗技法；主角至少携带一件法宝。
+7. 故事概要 tension 取值 10~90，代表剧情紧张度。
+8. nextOptions 至少提供 3 个不同的可选行动，每个包含简短描述与至少 2 条潜在后果描述。
 
 输出 JSON 结构示例（请根据剧情填充真实内容）：
 {
