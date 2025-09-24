@@ -1,0 +1,36 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Noto Serif SC", serif;
+  background: radial-gradient(circle at top, #14213d 0%, #0b090a 45%, #050505 100%);
+  color: #f5f3f4;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  background: linear-gradient(120deg, #fca311, #e85d04);
+  border: none;
+  color: #14110f;
+  font-weight: bold;
+  padding: 0.65rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(248, 189, 7, 0.35);
+}

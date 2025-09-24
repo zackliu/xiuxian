@@ -1,0 +1,72 @@
+﻿.log {
+  background: rgba(20, 33, 61, 0.25);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  max-height: 360px;
+  overflow-y: auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.log header {
+  font-size: 1.1rem;
+  margin: 0;
+  letter-spacing: 0.08em;
+}
+
+.log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.log li {
+  display: grid;
+  gap: 0.4rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgba(252, 163, 17, 0.35);
+}
+
+.log__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.log__tag {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(252, 163, 17, 0.3);
+  color: #fca311;
+}
+
+.log__tag--battle {
+  background: rgba(234, 88, 12, 0.3);
+  color: #ffb089;
+}
+
+.log__tag--discovery {
+  background: rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+}
+
+.log__tag--relationship {
+  background: rgba(244, 114, 182, 0.25);
+  color: #f9a8d4;
+}
+
+.log__description {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.log__related {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}

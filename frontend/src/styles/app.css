@@ -1,0 +1,50 @@
+main {
+  min-height: 100vh;
+}
+
+.init-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.init-card {
+  display: grid;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  width: min(480px, 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+}
+
+textarea {
+  min-height: 90px;
+}
+
+label {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
