@@ -1,4 +1,4 @@
-﻿export type CultivationRealm =
+export type CultivationRealm =
   | 'Mortal'
   | 'Qi Refining'
   | 'Foundation Establishment'
@@ -178,7 +178,7 @@ export interface GameInitResponse {
 }
 
 export interface StoryAdvanceRequest {
-  choiceId: string;
+  command: string;
 }
 
 export interface StoryAdvanceResponse {
@@ -194,19 +194,6 @@ export interface BattleSimulateRequest {
 
 export interface BattleSimulateResponse {
   resolution: BattleResolution;
-}
-
-export interface TechniqueGeneratorConfig {
-  desiredRealm: CultivationRealm;
-  focus: 'Body' | 'Qi' | 'Soul' | 'Dual';
-  tier?: TechniqueTier;
-  subGrade?: TierSubGrade;
-}
-
-export interface TreasureGeneratorConfig {
-  tier: TechniqueTier;
-  subGrade?: TierSubGrade;
-  slot: EquipmentSlot;
 }
 
 export interface HistoryRecordQuery {

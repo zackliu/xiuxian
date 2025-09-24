@@ -1,6 +1,5 @@
-﻿import { defaultStore, FileStore } from '../storage/fileStore.js';
+import { defaultStore, FileStore } from '../storage/fileStore.js';
 import type { GameState, GameHistory } from '../domain/index.js';
-import { ensureGameDataSubGrades } from '../utils/subGrade.js';
 
 export class GameRepository {
   constructor(private readonly store: FileStore = defaultStore) {}
@@ -10,28 +9,15 @@ export class GameRepository {
       this.store.readState(),
       this.store.readHistory()
     ]);
-
-    const { state: sanitizedState, history: sanitizedHistory, changed } = ensureGameDataSubGrades(state, history);
-
-    if (changed) {
-      if (sanitizedState) {
-        await this.store.writeState(sanitizedState);
-      }
-      if (sanitizedHistory) {
-        await this.store.writeHistory(sanitizedHistory);
-      }
-    }
-
-    return { state: sanitizedState, history: sanitizedHistory };
+    return { state, history };
   }
 
   async saveGame(state: GameState, history: GameHistory) {
-    const { state: sanitizedState, history: sanitizedHistory } = ensureGameDataSubGrades(state, history);
     await Promise.all([
-      this.store.writeState(sanitizedState!),
-      this.store.writeHistory(sanitizedHistory!)
+      this.store.writeState(state),
+      this.store.writeHistory(history)
     ]);
-    return { state: sanitizedState!, history: sanitizedHistory! };
+    return { state, history };
   }
 }
 

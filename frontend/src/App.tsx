@@ -1,4 +1,4 @@
-﻿import { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Dashboard } from '@pages/Dashboard';
 import { useGameStore } from '@state/useGameStore';
 import './styles/app.css';

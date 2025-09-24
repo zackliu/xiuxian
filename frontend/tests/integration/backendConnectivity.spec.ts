@@ -1,4 +1,4 @@
-﻿import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { describe, expect, it } from 'vitest';
 
 const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:4000';

@@ -1,4 +1,4 @@
-﻿import type { GameHistory, TimelineEvent } from '@xiuxian/shared';
+import type { GameHistory, TimelineEvent } from '@xiuxian/shared';
 import './InteractionLog.css';
 
 interface Props {

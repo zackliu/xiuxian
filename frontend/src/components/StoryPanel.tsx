@@ -1,4 +1,4 @@
-﻿import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import type { StoryBeat } from '@xiuxian/shared';
 import './StoryPanel.css';
 

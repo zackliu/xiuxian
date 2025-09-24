@@ -1,4 +1,4 @@
-﻿import { useEffect } from 'react';
+import { useEffect } from 'react';
 import { CharacterPanel } from '@components/CharacterPanel';
 import { StoryPanel } from '@components/StoryPanel';
 import { BattlePanel } from '@components/BattlePanel';
@@ -21,7 +21,7 @@ export const Dashboard = () => {
   }, [fetchState, fetchHistory]);
 
   const handleChoice = (choiceText: string) => {
-    advanceStory({ choiceId: choiceText });
+    advanceStory({ command: choiceText });
   };
 
   const handleSimulateBattle = (attackerId: string, defenderId: string) => {
@@ -45,3 +45,4 @@ export const Dashboard = () => {
     </div>
   );
 };
+

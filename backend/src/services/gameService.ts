@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import type {
   GameInitPayload,
   GameState,
@@ -5,39 +6,12 @@ import type {
   StoryAdvanceRequest,
   StoryAdvanceResponse,
   BattleSimulateRequest,
-  BattleSimulateResponse,
-  GameHistory,
-  CharacterSheet
+  BattleSimulateResponse
 } from '../domain/index.js';
-import { generateCharacter } from '../generators/characterGenerator.js';
-import { generateStoryBeat } from '../generators/storyGenerator.js';
 import { simulateBattle } from '../battle/simulator.js';
 import { gameRepository } from '../repositories/gameRepository.js';
 import { logger } from '../utils/logger.js';
-
-const seedHistory = (player: CharacterSheet, npcs: CharacterSheet[]): GameHistory => ({
-  characters: [player, ...npcs].reduce<Record<string, CharacterSheet>>((acc, character) => {
-    acc[character.id] = character;
-    return acc;
-  }, {}),
-  treasures: npcs.flatMap((npc) => npc.equippedTreasures).reduce((acc, treasure) => {
-    acc[treasure.id] = treasure;
-    return acc;
-  }, {} as GameHistory['treasures']),
-  techniques: npcs.flatMap((npc) => npc.cultivationTechniques).reduce((acc, technique) => {
-    acc[technique.id] = technique;
-    return acc;
-  }, {} as GameHistory['techniques']),
-  battles: [],
-  storyBeats: [],
-  timeline: []
-});
-
-const buildWorldState = () => ({
-  factions: ['Azure Cloud Sect', 'Scarlet Moon Alliance', 'Verdant Pill Pavilion'],
-  locations: ['Azure Cloud Sect', 'Scarlet Moon City', 'Emerald Bamboo Forest'],
-  rumors: ['An ancient relic surfaced near Fallen Star Valley', 'Storms brewing around the Heavenly Rift']
-});
+import { generateInitialGame, generateStoryProgress } from './aiStoryService.js';
 
 export class GameService {
   async initialize(payload: GameInitPayload): Promise<GameInitResponse> {
@@ -47,38 +21,7 @@ export class GameService {
       return { state: existing.state };
     }
 
-    const player = generateCharacter({ role: 'player', name: payload.protagonistName, realm: 'Qi Refining' });
-    player.history.push(`Background: ${payload.background}`);
-    player.history.push(`Temperament: ${payload.temperament}`);
-    player.history.push(`Goal: ${payload.goal}`);
-
-    const npcs = Array.from({ length: 6 }, () => generateCharacter());
-    const history = seedHistory(player, npcs);
-    const initialBeat = generateStoryBeat({
-      playerCharacter: player,
-      worldState: buildWorldState(),
-      activeStory: null,
-      pendingBattles: [],
-      history
-    } as GameState);
-
-    history.storyBeats.push(initialBeat);
-    history.timeline.push({
-      id: initialBeat.id,
-      type: 'story',
-      description: initialBeat.summary,
-      timestamp: Date.now(),
-      relatedIds: initialBeat.involvedCharacterIds
-    });
-
-    const state: GameState = {
-      playerCharacter: player,
-      worldState: buildWorldState(),
-      activeStory: initialBeat,
-      pendingBattles: [],
-      history
-    };
-
+    const { state, history } = await generateInitialGame(payload);
     await gameRepository.saveGame(state, history);
     return { state };
   }
@@ -94,25 +37,28 @@ export class GameService {
       throw new Error('No game state found. Initialize first.');
     }
 
-    const nextBeat = generateStoryBeat(state);
-    history.storyBeats.push(nextBeat);
+    const progress = await generateStoryProgress(state, request.command);
+
     history.timeline.push({
-      id: nextBeat.id,
+      id: uuid(),
       type: 'story',
-      description: `Player chose ${request.choiceId}: ${nextBeat.summary}`,
+      description: `主角行动：${request.command}`,
       timestamp: Date.now(),
-      relatedIds: nextBeat.involvedCharacterIds
+      relatedIds: [state.playerCharacter.id]
     });
+
+    history.storyBeats.push(progress.storyBeat);
+    history.timeline.push(...progress.timelineEvents);
 
     const newState: GameState = {
       ...state,
-      activeStory: nextBeat,
+      activeStory: progress.storyBeat,
       history
     };
 
     await gameRepository.saveGame(newState, history);
 
-    return { state: newState, newStoryBeat: nextBeat };
+    return { state: newState, newStoryBeat: progress.storyBeat };
   }
 
   async simulateBattle(request: BattleSimulateRequest): Promise<BattleSimulateResponse> {
