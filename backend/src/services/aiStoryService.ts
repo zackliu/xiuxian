@@ -15,6 +15,7 @@ import { getOpenAIClient, getOpenAIModel } from '../ai/openAIClient.js';
 import { logger } from '../utils/logger.js';
 import { buildStoryInitPrompt } from '../prompts/storyInitPrompt.js';
 import { buildStoryProgressPrompt } from '../prompts/storyProgressPrompt.js';
+import { defaultSegmentedStore } from '../state/segmentedStore.js';
 
 const TechniqueTierSchema = z.enum(['Mortal', 'Earth', 'Heaven', 'Mystic', 'Immortal']);
 const TierSubGradeSchema = z.enum(['下品', '中品', '上品']);
@@ -330,6 +331,9 @@ export const generateInitialGame = async (payload: GameInitPayload) => {
     history
   };
 
+  // Populate segmented store using the initial state
+  await defaultSegmentedStore.migrateFromWholeState({ state, history });
+
   return { state, history };
 };
 
@@ -341,7 +345,7 @@ export const generateStoryProgress = async (state: GameState, command: string) =
     temperature: 0.7,
     messages: [
       { role: 'system', content: '你负责延续仙侠故事的发展，确保逻辑一致。' },
-      { role: 'user', content: buildStoryProgressPrompt(state, command) }
+      { role: 'user', content: await buildStoryProgressPrompt(state, command) }
     ]
   });
 
@@ -359,6 +363,12 @@ export const generateStoryProgress = async (state: GameState, command: string) =
   const characters = Object.values(state.history.characters);
   const storyBeat = buildStoryBeat(parsed.story, characters);
   const timelineEvents = buildTimelineEvents(parsed.timeline, characters, Date.now());
+
+  // Apply incremental patch to segmented store
+  await defaultSegmentedStore.apply({
+    newStoryBeats: [storyBeat],
+    newTimeline: timelineEvents
+  });
 
   return {
     storyBeat,
